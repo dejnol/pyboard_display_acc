@@ -1,1 +1,54 @@
-# main.py -- put your code here!# The MIT License (MIT)## Copyright (c) 2014 Kenneth Henderick## Permission is hereby granted, free of charge, to any person obtaining a copy# of this software and associated documentation files (the "Software"), to deal# in the Software without restriction, including without limitation the rights# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell# copies of the Software, and to permit persons to whom the Software is# furnished to do so, subject to the following conditions:## The above copyright notice and this permission notice shall be included in# all copies or substantial portions of the Software.## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN# THE SOFTWARE.import pybfrom pyb import Pin, ADCfrom ssd1306 import SSD1306accel = pyb.Accel()adc = ADC(Pin('X22'))display = SSD1306(pinout={'sda': 'Y10',                          'scl': 'Y9'},                  height=64,                  external_vcc=False)def sw_callback():  led_green.toggle()  print("ButtonPressed")sw = pyb.Switch()sw.callback(sw_callback)led_red = pyb.LED(1)led_red.off()led_green = pyb.LED(2)led_green.on()led_orange = pyb.LED(3)led_orange.on()try:  display.poweron()  display.init_display()    display.draw_text(32,21,'X')  display.draw_text(64,56,'Y')  display.set_pixel(1,1,True)    print("printdebug")      for x in range(40,84):    display.set_pixel(x,6,True)    display.set_pixel(x,50,True)  for y in range(6,50):    display.set_pixel(40, y,True)    display.set_pixel(84, y,True)  while True:##    display.draw_text(10,0,'X= ')##    display.draw_text(25,0,'   ')##    display.draw_text(25,0,str(accel.x()))##    display.draw_text(45,0,'Y= ')##    display.draw_text(60,0,'   ')##    display.draw_text(60,0,str(accel.y()))##    display.draw_text(85,0,'Z= ')##    display.draw_text(100,0,'   ')##    display.draw_text(100,0,str(accel.z()))    display.set_pixel(63 - accel.x(), 30 - accel.y(), True)    display.draw_text(100,1,str(adc.read()))    display.display()except Exception as ex:  led_red.on()  print('Unexpected error: {0}'.format(ex))  display.poweroff()
+import pyb
+from pyb import Pin, ADC
+from ssd1306 import SSD1306
+
+accel = pyb.Accel()
+adc = ADC(Pin('X22'))
+display = SSD1306(pinout={'sda': 'Y10','scl': 'Y9'},height=64,external_vcc=False)
+
+def sw_callback():
+  led_green.toggle()
+  print("ButtonPressed")
+ 
+sw = pyb.Switch()
+sw.callback(sw_callback)
+
+led_red = pyb.LED(1)
+led_red.off()
+
+led_green = pyb.LED(2)
+led_green.on()
+
+led_orange = pyb.LED(3)
+led_orange.on()
+
+try:
+  display.poweron()
+  display.init_display()
+  
+  display.draw_text(32,21,'X')
+  display.draw_text(64,56,'Y')
+  
+  display.set_pixel(1,1,True)
+  
+  print("printdebug")
+  
+  for x in range(40,84):
+    display.set_pixel(x,6,True)
+    display.set_pixel(x,50,True)
+    
+  for y in range(6,50):
+    display.set_pixel(40, y,True)
+    display.set_pixel(84, y,True)
+    
+  while True:
+    display.set_pixel(63 - accel.x(), 30 - accel.y(), True)
+    display.draw_text(100,1,str(adc.read()))
+    display.display()
+    
+except Exception as ex:
+  led_red.on()
+  print('Unexpected error: {0}'.format(ex))
+  display.poweroff()
+
+ 
